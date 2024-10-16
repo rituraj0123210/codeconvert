@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSON to Kotlin Converter</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 200px;
+      margin-bottom: 20px;
+    }
+
+    pre {
+      background-color: #f4f4f4;
+      padding: 10px;
+      border: 1px solid #ccc;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    button {
+      padding: 10px 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .copy-button {
+      padding: 5px 10px;
+      background-color: #28a745; /* Green color for the copy button */
+      color: white; /* Text color */
+      border: none; /* No border */
+      cursor: pointer; /* Pointer cursor on hover */
+      margin-top: 10px;
+    }
+
+    .copy-button:hover {
+      background-color: #218838; /* Darker green on hover */
+    }
+
+    /* Style for the button container */
+    .button-container {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Convert JSON to Kotlin Data Classes</h2>
+
+  <label for="jsonInput">Enter JSON:</label>
+  <textarea id="jsonInput" placeholder="Paste your JSON here"></textarea>
+
+  <button onclick="convertToKotlin()">Convert to Kotlin Classes</button>
+
+ 
+
+  <h3>Kotlin Data Classes:</h3>
+
+
+  <div class="button-container">
+    <button class="copy-button" onclick="copyToClipboard()">Copy</button>
+  </div>
+
+  <pre id="kotlinOutput"></pre>
+  
+  
+
+  <script src="/public/jsontokotlin.js"></script>
+
+  <script>
+    function copyToClipboard() {
+      const kotlinOutput = document.getElementById("kotlinOutput").innerText;
+      navigator.clipboard.writeText(kotlinOutput)
+        .then(() => {
+          // Removed alert to prevent showing a message after copying
+        })
+        .catch(err => {
+          console.error('Error copying text: ', err);
+        });
+    }
+  </script>
+
+</body>
+</html>
