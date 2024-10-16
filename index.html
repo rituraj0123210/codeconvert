@@ -39,18 +39,17 @@
 
     .copy-button {
       padding: 5px 10px;
-      background-color: #28a745; /* Green color for the copy button */
-      color: white; /* Text color */
-      border: none; /* No border */
-      cursor: pointer; /* Pointer cursor on hover */
+      background-color: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
       margin-top: 10px;
     }
 
     .copy-button:hover {
-      background-color: #218838; /* Darker green on hover */
+      background-color: #218838;
     }
 
-    /* Style for the button container */
     .button-container {
       margin-top: 10px;
     }
@@ -65,33 +64,128 @@
 
   <button onclick="convertToKotlin()">Convert to Kotlin Classes</button>
 
- 
-
   <h3>Kotlin Data Classes:</h3>
-
 
   <div class="button-container">
     <button class="copy-button" onclick="copyToClipboard()">Copy</button>
   </div>
 
   <pre id="kotlinOutput"></pre>
-  
-  
 
-  <script src="/public/jsontokotlin.js"></script>
+  <!-- Ensure the jsontokotlin.js is being referenced correctly -->
+  <script src="/jsontokotlin.js"></script>
 
   <script>
     function copyToClipboard() {
       const kotlinOutput = document.getElementById("kotlinOutput").innerText;
       navigator.clipboard.writeText(kotlinOutput)
         .then(() => {
-          // Removed alert to prevent showing a message after copying
+          console.log('Text copied to clipboard');
         })
         .catch(err => {
           console.error('Error copying text: ', err);
         });
     }
+
+    function convertToKotlin() {
+      const jsonInput = document.getElementById("jsonInput").value;
+
+      // Clear previous output and reset nested classes storage
+      document.getElementById("kotlinOutput").innerText = "";
+      nestedClasses = ""; // Reset the nested classes string
+      generatedClasses = {}; // Track generated classes to avoid duplicates
+
+      let kotlinClasses = "";
+
+      try {
+        const jsonObject = JSON.parse(jsonInput);
+        kotlinClasses = generateKotlinClasses(jsonObject, "Root");
+      } catch (e) {
+        kotlinClasses = "Invalid JSON format";
+      }
+
+      // Output the generated Kotlin classes
+      document.getElementById("kotlinOutput").innerText = kotlinClasses;
+    }
+
+    let nestedClasses = ""; // This will store all the nested classes
+    let generatedClasses = {}; // Track generated classes to avoid duplicates
+
+    function generateKotlinClasses(jsonObject, className = "Root") {
+      const uniqueClassName = getUniqueClassName(className);
+      let kotlinCode = `data class ${uniqueClassName}(\n`;
+
+      for (const key in jsonObject) {
+        const value = jsonObject[key];
+        let type = getType(value, key);
+
+        kotlinCode += `    val ${key}: ${type},\n`;
+      }
+
+      kotlinCode = kotlinCode.slice(0, -2); // Remove last comma
+      kotlinCode += "\n)\n";
+
+      return kotlinCode + nestedClasses;
+    }
+
+    function getType(value, key) {
+      if (Array.isArray(value)) {
+        if (value.length > 0 && typeof value[0] === 'object' && value[0] !== null) {
+          const nestedClassName = capitalizeFirstLetter(key.slice(0, -1));
+          nestedClasses += generateKotlinClasses(value[0], nestedClassName);
+          return `List<${nestedClassName}>`;
+        } else {
+          return `List<${mapTypeToKotlin(typeof value[0])}>`;
+        }
+      } else if (typeof value === "object" && value !== null) {
+        const nestedClassName = capitalizeFirstLetter(key);
+        nestedClasses += generateKotlinClasses(value, nestedClassName);
+        return nestedClassName;
+      } else {
+        return mapTypeToKotlin(typeof value);
+      }
+    }
+
+    function getUniqueClassName(baseName) {
+      if (!generatedClasses[baseName]) {
+        generatedClasses[baseName] = 1;
+        return baseName;
+      } else {
+        const count = generatedClasses[baseName]++;
+        return `${baseName}${count}`;
+      }
+    }
+
+    function mapTypeToKotlin(jsType) {
+      switch (jsType) {
+        case "number":
+          return "Double";
+        case "boolean":
+          return "Boolean";
+        case "string":
+          return "String";
+        default:
+          return "Any";
+      }
+    }
+
+    function capitalizeFirstLetter(string) {
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    }
   </script>
+
+  <h1>heloo</h1>
+  <h1>heloo</h1>
+
+  <h1>heloo</h1>
+
+
+  <h1>heloo</h1>
+
+  <h1>heloo</h1>
+
+  <h1>heloo</h1>
+
 
 </body>
 </html>
